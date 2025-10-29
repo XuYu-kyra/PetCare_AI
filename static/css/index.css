@@ -1,0 +1,108 @@
+  body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+  }
+  
+  h1 {
+      text-align: center;
+  }
+  
+  .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 260px;
+      overflow-y: auto;
+      background-color: #f5f5f5;
+      padding-top: 40px;
+      padding-bottom: 40px;
+  }
+  
+  .message {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+  }
+  
+  .message.ai {
+      justify-content: flex-start;
+  }
+  
+  .message.user {
+      justify-content: flex-end;
+  }
+  
+  .message img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin: 0 10px;
+  }
+  
+  .message .text {
+      max-width: 60%;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: white;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .message.ai .text {
+      background-color: #fff;
+  }
+  
+  .message.user .text {
+      background-color: #3d61ed;
+      color: #fff;
+  }
+  
+  .input-container {
+      display: flex;
+      padding: 20px;
+      background-color: white;
+      border-top: 1px solid #ddd;
+      justify-content: center;
+  }
+  
+  .input-container input {
+      flex: 1;
+      padding: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-right: 10px;
+  }
+  
+  .input-container button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #42a5f5;
+      color: white;
+      cursor: pointer;
+  }
+  
+  .iconfont {
+      font-size: 30px;
+  }
+  
+  .icon {
+      position: absolute;
+      right: 3%;
+  }
+  
+  .foot {
+      position: relative;
+      width: 500px;
+      align-items: center;
+  }
+  
+  .icon-yuyin {
+      margin: 0 10px;
+  }
+  
+  .icon-fasong {
+      margin-left: 10px;
+  }

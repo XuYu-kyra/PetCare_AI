@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>问答项目</title>
+    
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/iconfont.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" type="text/javascript"></script>
+    <script src="{% static 'js/WXLsearch.js' %}"></script>
+</head>
+
+<body>
+    <h1>宠物医生</h1>
+
+    <div class="container">
+        <div class="content">
+            <div class="item item-left">
+                <div class="avatar avatar-bot"></div>
+                <div class="bubble bubble-left">您好 ! 我是宠物医生机器人, 很高兴为您服务</div>
+            </div>
+            <div class="item item-right">
+                <div class="avatar avatar-user"></div>
+                <div class="bubble bubble-right">你好, 我想了解一下你们的服务。</div>
+            </div>
+            <!-- Additional conversation items as needed -->
+        </div>
+        <div class="input-area">
+            <textarea name="text" id="chattextarea" placeholder="输入你的消息..."></textarea>
+            <div class="button-area">
+                <button id="chatbotsendbtn">发送</button>
+                <input type="file" id="imageUpload" accept="image/*" style="display:none">
+                <button id="imageUploadBtn">图片</button>
+                <input type="file" id="audioUpload" accept="audio/*" style="display:none">
+                <button id="audioUploadBtn">语音</button>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
