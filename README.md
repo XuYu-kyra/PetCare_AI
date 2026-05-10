@@ -1,91 +1,105 @@
-## 项目说明
+# PetCare AI
 
-这是一个基于 Django 的小型网站项目（项目名：`petcare`），包含基础页面、静态资源、媒体上传目录与一个应用 `cwyl`。可用于本地运行、开发与部署到服务器或容器环境。本文档帮助你在本地快速启动并推送到 GitHub。
+PetCare AI is a Django-based web application designed as a lightweight intelligent pet-care dialogue platform. The project includes standard Django pages, static assets, media upload directories, and a core application module for back-end logic and interaction handling.
 
-## 环境要求
+This repository can be used for local development, demonstration, and future deployment to a server or containerized environment.
 
-- Python 3.9+（推荐 3.10/3.11）
-- pip / venv（或 conda）
-- Git（用于推送到 GitHub）
-- 操作系统：Windows 10/11（示例命令使用 PowerShell）
+## Requirements
 
-## 目录结构
+- Python 3.9 or later
+- `pip` and `venv` (or Conda)
+- Git for version control
+
+## Project Structure
 
 ```text
 petcare/
 ├─ manage.py
 ├─ db.sqlite3
-├─ 1/                       # 一些 CSV 数据示例
-├─ cwyl/                    # 业务应用（models、views、urls 等）
-├─ media/uploads/           # 媒体上传目录
-├─ static/                  # 静态资源（CSS/JS/Images）
-├─ templates/               # 模板页（index/questionAnswering/wqq 等）
-└─ petcare/                 # 项目配置（settings/urls/asgi/wsgi）
+├─ 1/                       # Sample CSV data
+├─ cwyl/                    # Core application logic (models, views, urls)
+├─ media/uploads/           # Uploaded media files
+├─ static/                  # Static assets (CSS, JS, images)
+├─ templates/               # HTML templates
+└─ petcare/                 # Project settings and configuration
 ```
 
-## 快速开始（本地开发）
+## Features
 
-以下以 PowerShell 为例，在项目根目录 `petcare` 下执行：
+- Django-based web application architecture
+- Intelligent question-answering style interaction flow
+- Static and media file support
+- Django Admin support for management and testing
+
+## Quick Start
+
+### 1. Create and activate a virtual environment
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+On Windows PowerShell:
 
 ```powershell
-# 1) 创建与激活虚拟环境（可选但强烈推荐）
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+```
 
-# 2) 安装依赖（若无 requirements.txt，可先安装 Django）
+### 2. Install dependencies
+
+```bash
 pip install --upgrade pip
 pip install django
 ```
 
-如果后续使用了额外库（如 pandas、django-import-export 等），请根据需要安装：
+If you use additional libraries such as `pandas` or `django-import-export`, install them as needed:
 
-```powershell
+```bash
 pip install pandas django-import-export
 ```
 
-### 初始化数据库
+### 3. Apply database migrations
 
-```powershell
+```bash
 python manage.py migrate
 ```
 
-### 创建超级用户（可登录 /admin/）
+### 4. Create an admin user
 
-```powershell
+```bash
 python manage.py createsuperuser
 ```
 
-### 运行开发服务器
+### 5. Start the development server
 
-```powershell
+```bash
 python manage.py runserver
 ```
 
-启动成功后访问：
+Then open:
 
-- 主页（如已路由）：`http://127.0.0.1:8000/`
-- 管理后台：`http://127.0.0.1:8000/admin/`
-- 其他模板页（如配置了路由）：`/questionAnswering/`、`/wqq/`
+- Main site: `http://127.0.0.1:8000/`
+- Admin dashboard: `http://127.0.0.1:8000/admin/`
 
-> 注：实际可访问路径以 `petcare/urls.py` 与 `cwyl/urls.py` 中的路由为准。
+Actual routes depend on the URL configuration in `petcare/urls.py` and `cwyl/urls.py`.
 
-## 静态与媒体文件
+## Static and Media Files
 
-- 开发环境下，Django 会直接从 `static/` 提供静态资源。
-- 上传文件默认位于 `media/uploads/`，可在 `petcare/settings.py` 调整 `MEDIA_ROOT` 与 `MEDIA_URL`。
-- 生产环境建议使用 `collectstatic` 收集静态文件并交由 Web 服务器（Nginx 等）托管：
+- Static assets are served from `static/` during development
+- Uploaded files are stored in `media/uploads/`
+- In production, you should run:
 
-```powershell
+```bash
 python manage.py collectstatic
 ```
 
-## 推送到 GitHub
+## GitHub Setup
 
-1) 在 GitHub 创建一个空仓库（例如：`yourname/petcare`）。
+If you want to publish the project to GitHub:
 
-2) 在项目根目录执行：
-
-```powershell
+```bash
 git init
 git add .
 git commit -m "chore: initial commit"
@@ -94,41 +108,34 @@ git remote add origin https://github.com/yourname/petcare.git
 git push -u origin main
 ```
 
-> 建议添加合适的 `.gitignore` 防止将虚拟环境、编译产物等推送到仓库。示例内容：
+Suggested `.gitignore`:
 
 ```gitignore
-# Python
 __pycache__/
 *.py[cod]
 *.sqlite3
 .venv/
-
-# Django
 staticfiles/
 media/
-
-# IDE/OS
 .vscode/
 .idea/
 *.log
 ```
 
-## 常见问题（FAQ）
+## Common Issues
 
-- 数据库锁或权限问题（Windows）：若出现 SQLite 被占用，先关闭运行中的服务或编辑器占用进程，再重试 `migrate`/`runserver`。
-- 静态资源不生效：确认模板中引用了正确的 `{% load static %}`，并使用 `{% static 'path/to/file' %}`。生产环境需完成 `collectstatic` 并正确配置静态目录。
-- 中文路径/编码：本项目路径包含中文，确保终端编码为 UTF-8（PowerShell 可执行 `chcp 65001`），或将项目移至无中文路径位置。
+- SQLite file lock issues: stop any running processes that are using the database
+- Static files not loading: verify template static tags and static configuration
+- Encoding issues on systems with Chinese paths: ensure UTF-8 terminal encoding or move the project to a path without non-ASCII characters
 
-## 许可证
+## License
 
-未指定许可证。若需开源，建议添加 `LICENSE` 文件（如 MIT/Apache-2.0）。
+No license is currently specified. Add a `LICENSE` file if you plan to open-source the project.
 
-## 贡献
+## Contribution
 
-欢迎提交 Issue 或 PR 改进代码与文档。提交前请确保：
+Issues and pull requests are welcome. Before submitting changes, please make sure:
 
-- 代码可运行、通过基本检查
-- 变更点简要说明（Commit message 清晰）
-- 如涉及依赖变化，请同步更新文档
-
-
+- the project still runs correctly
+- the change is clearly described
+- dependency changes are reflected in the documentation
