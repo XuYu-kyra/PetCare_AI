@@ -21,11 +21,14 @@ def buildindex(request):
     if request.method == 'POST':
         name = request.POST.get('id')
         if name == 'submit2index':
+            stopwords_file_path = os.getenv(
+                'STOPWORDS_PATH',
+                os.path.join(settings.BASE_DIR, 'data', 'stopwords.txt'),
+            )
             stopwords = []
-            stopwords_file_path = 'C:\\Users\\xxuu\\Desktop\\社交网络\\徐瑜+22920212204471+作业三\\stopwords.txt'  # 您定义的stopwords文件路径
-
-            with open(stopwords_file_path, encoding='utf-8') as f:
-                stopwords = [word.strip() for word in f]
+            if os.path.exists(stopwords_file_path):
+                with open(stopwords_file_path, encoding='utf-8') as f:
+                    stopwords = [word.strip() for word in f]
             # 获取所有电影的文本属性用于索引
             movie_list = Oridata.objects.values('id', 'question', 'answer')
             all_keywords = []
@@ -85,12 +88,12 @@ from .models import QandA  # 假设QandA模型在同一应用中
 from sparkai.llm.llm import ChatSparkLLM, ChunkPrintHandler
 from sparkai.core.messages import ChatMessage
 
-# 星火认知大模型相关配置
-SPARKAI_URL = 'wss://spark-api.xf-yun.com/v3.5/chat'
-SPARKAI_APP_ID = 'd7524846'
-SPARKAI_API_SECRET = 'YmM1MjVmNTdjYmRkNzY1NWI1NDY0YWJh'
-SPARKAI_API_KEY = '8bdcd6fd30b3c3bb084535c2d11e16f5'
-SPARKAI_DOMAIN = 'generalv3.5'
+# 星火认知大模型相关配置：凭据必须由运行环境提供
+SPARKAI_URL = os.getenv('SPARKAI_URL', 'wss://spark-api.xf-yun.com/v3.5/chat')
+SPARKAI_APP_ID = os.getenv('SPARKAI_APP_ID')
+SPARKAI_API_SECRET = os.getenv('SPARKAI_API_SECRET')
+SPARKAI_API_KEY = os.getenv('SPARKAI_API_KEY')
+SPARKAI_DOMAIN = os.getenv('SPARKAI_DOMAIN', 'generalv3.5')
 
 # 定义问答库
 qa_data = QandA.objects.all()
@@ -184,7 +187,10 @@ def searchanswer(request):
                 ml_answer = answer_question(text, db_text)  # 使用前端的问题而不是数据库中的问题
                 res['ml_answers'] = [ml_answer]
 
-                # 使用星火模型微调返回最相关的一个答案
+                # 配置凭据后才调用星火模型；本地检索路径可独立运行
+                if not all([SPARKAI_APP_ID, SPARKAI_API_SECRET, SPARKAI_API_KEY]):
+                    return HttpResponse(json.dumps(res), content_type='application/json')
+
                 spark = ChatSparkLLM(
                     spark_api_url=SPARKAI_URL,
                     spark_app_id=SPARKAI_APP_ID,
