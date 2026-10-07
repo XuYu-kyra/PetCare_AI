@@ -95,20 +95,19 @@ SPARKAI_API_SECRET = os.getenv('SPARKAI_API_SECRET')
 SPARKAI_API_KEY = os.getenv('SPARKAI_API_KEY')
 SPARKAI_DOMAIN = os.getenv('SPARKAI_DOMAIN', 'generalv3.5')
 
-# 定义问答库
-qa_data = QandA.objects.all()
+def build_retrieval_index():
+    """Build the in-memory TF-IDF/KNN index from the current Q&A table."""
+    qa_data = list(QandA.objects.all())
+    if not qa_data:
+        return [], [], None, None, None
 
-# 提取问题和答案
-questions = [qa.question for qa in qa_data]
-answers = [qa.answer for qa in qa_data]
-
-# 使用TF-IDF向量化文本数据
-vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(questions)
-
-# 使用KNN算法进行最近邻搜索
-knn = NearestNeighbors(n_neighbors=3)
-knn.fit(X)
+    questions = [qa.question for qa in qa_data]
+    answers = [qa.answer for qa in qa_data]
+    vectorizer = TfidfVectorizer()
+    matrix = vectorizer.fit_transform(questions)
+    knn = NearestNeighbors(n_neighbors=min(3, len(questions)))
+    knn.fit(matrix)
+    return questions, answers, vectorizer, matrix, knn
 
 # 自定义函数进行关键字提取
 def extract_keywords(text, topK=20):
@@ -156,7 +155,11 @@ def searchanswer(request):
         if name == 'chatbotsendbtn':
             try:
                 # 获取前端的问题文本
-                text = request.GET.get('text')
+                text = request.GET.get('text', '')
+                questions, answers, vectorizer, X, knn = build_retrieval_index()
+                if not answers:
+                    res['text'] = '问答库为空，请先通过 Django Admin 添加 QandA 数据。'
+                    return HttpResponse(json.dumps(res), content_type='application/json')
 
                 # 对输入问题文本进行关键字提取
                 keywords = extract_keywords(text)
@@ -202,10 +205,11 @@ def searchanswer(request):
                 spark_messages = [ChatMessage(role="user", content=text)]
                 handler = ChunkPrintHandler()
                 spark_response = spark.generate([spark_messages], callbacks=[handler])
-                res['fine_tuned_answers'] = [spark_response]
+                spark_text = spark_response.generations[0][0].text
+                res['fine_tuned_answers'] = [spark_text]
 
             except Exception as e:
                 print(e)
-                res['text'] = answers[most_similar_idx]
+                res['text'] = '请求处理失败，请检查本地数据和模型配置。'
 
     return HttpResponse(json.dumps(res), content_type='application/json')
